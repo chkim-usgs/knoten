@@ -129,13 +129,12 @@ TEST(CoordinateTransformTest, MarsLatLonToEcef) {
 
 // Test batch transformations
 TEST(CoordinateTransformTest, BatchEcefToLatLon) {
-    GroundPointsBatch batch;
-    batch.x = {6378137.0, 0.0};
-    batch.y = {0.0, 6378137.0};
-    batch.z = {0.0, 0.0};
-    batch.count = 2;
+    std::vector<Vec3> points = {
+        {6378137.0, 0.0, 0.0},
+        {0.0, 6378137.0, 0.0}
+    };
 
-    std::vector<LatLon> results = batchEcefToLatLon(batch, 6378137.0, 6356752.314245);
+    std::vector<LatLon> results = batchEcefToLatLon(points, 6378137.0, 6356752.314245);
 
     EXPECT_EQ(results.size(), 2);
     EXPECT_NEAR(results[0].lat, 0.0, 1e-6);

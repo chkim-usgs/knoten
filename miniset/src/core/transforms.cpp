@@ -2,26 +2,27 @@
 
 namespace transforms {
 
-GroundPointsBatch imageToGroundBatch(const ImageCoordsBatch& coords, double height) {
-    GroundPointsBatch result;
-    result.resize(coords.count);
+std::vector<Vec3> imageToGroundBatch(const std::vector<ImageCoord>& coords, double height) {
+    std::vector<Vec3> result;
+    result.reserve(coords.size());
+
     // Placeholder implementation
-    for (size_t i = 0; i < coords.count; ++i) {
-        result.x[i] = coords.sample[i];
-        result.y[i] = coords.line[i];
-        result.z[i] = height;
+    for (const auto& coord : coords) {
+        result.push_back(Vec3(coord.sample, coord.line, height));
     }
+
     return result;
 }
 
-ImageCoordsBatch groundToImageBatch(const GroundPointsBatch& points) {
-    ImageCoordsBatch result;
-    result.resize(points.count);
+std::vector<ImageCoord> groundToImageBatch(const std::vector<Vec3>& points) {
+    std::vector<ImageCoord> result;
+    result.reserve(points.size());
+
     // Placeholder implementation
-    for (size_t i = 0; i < points.count; ++i) {
-        result.sample[i] = points.x[i];
-        result.line[i] = points.y[i];
+    for (const auto& pt : points) {
+        result.push_back(ImageCoord(pt.y, pt.x));
     }
+
     return result;
 }
 

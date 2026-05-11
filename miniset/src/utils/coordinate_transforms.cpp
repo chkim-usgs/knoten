@@ -5,7 +5,7 @@
 namespace utils {
 
 #ifdef MINISET_HAS_PROJ
-GroundPointsBatch transformCoordinates(const GroundPointsBatch& input,
+std::vector<Vec3> transformCoordinates(const std::vector<Vec3>& input,
                                        const std::string& source_proj,
                                        const std::string& dest_proj) {
     // Placeholder - requires PROJ implementation
@@ -17,7 +17,7 @@ LatLon ecefToLatLon(const Vec3& ecef_pt, double semi_major, double semi_minor) {
     double lon = std::atan2(ecef_pt.y, ecef_pt.x);
     double p = std::sqrt(ecef_pt.x * ecef_pt.x + ecef_pt.y * ecef_pt.y);
     double lat = std::atan2(ecef_pt.z, p);
-    
+
     // Iterative refinement for geodetic latitude
     double e2 = 1.0 - (semi_minor * semi_minor) / (semi_major * semi_major);
     for (int i = 0; i < 5; ++i) {
@@ -25,7 +25,7 @@ LatLon ecefToLatLon(const Vec3& ecef_pt, double semi_major, double semi_minor) {
         double N = semi_major / std::sqrt(1.0 - e2 * sin_lat * sin_lat);
         lat = std::atan2(ecef_pt.z + e2 * N * sin_lat, p);
     }
-    
+
     return LatLon(lat, lon);
 }
 
@@ -43,13 +43,12 @@ Vec3 latLonToEcef(double lat_rad, double lon_rad, double height,
     return Vec3(x, y, z);
 }
 
-std::vector<LatLon> batchEcefToLatLon(const GroundPointsBatch& batch,
+std::vector<LatLon> batchEcefToLatLon(const std::vector<Vec3>& points,
                                       double semi_major, double semi_minor) {
     std::vector<LatLon> results;
-    results.reserve(batch.count);
+    results.reserve(points.size());
 
-    for (size_t i = 0; i < batch.count; ++i) {
-        Vec3 pt{batch.x[i], batch.y[i], batch.z[i]};
+    for (const auto& pt : points) {
         results.push_back(ecefToLatLon(pt, semi_major, semi_minor));
     }
 

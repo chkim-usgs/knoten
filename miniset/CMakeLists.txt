@@ -24,7 +24,6 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 find_package(CSMAPI)
 find_package(USGSCSM)
 find_package(GDAL)
-find_package(Ceres QUIET)  # Re-enabled to test with conda clang
 find_package(PROJ)
 
 if(MINISET_ENABLE_OPENMP)
@@ -46,18 +45,14 @@ set(MINISET_SOURCES
     src/csm/csm_interface.cpp
     src/csm/camera_ops.cpp
     src/csm/triangulation.cpp
+    src/csm/campt.cpp
 
     # Phase 4: Sensor utilities
     src/sensor/angles.cpp
     src/sensor/resolution.cpp
     src/sensor/geometry.cpp
 
-    # Phase 5: Bundle adjustment
-    src/bundle/ceres_optimizer.cpp
-    src/bundle/cost_functors.cpp
-    src/bundle/partials.cpp
-
-    # Phase 6: Coordinate transforms
+    # Phase 5: Coordinate transforms (bundle adjustment removed)
     src/utils/coordinate_transforms.cpp
     src/utils/proj_wrapper.cpp
 )
@@ -84,11 +79,6 @@ if(USGSCSM_FOUND)
     target_compile_definitions(miniset PUBLIC MINISET_HAS_USGSCSM)
 endif()
 
-if(Ceres_FOUND)
-    target_link_libraries(miniset PUBLIC Ceres::ceres)
-    target_compile_definitions(miniset PUBLIC MINISET_HAS_CERES)
-endif()
-
 if(GDAL_FOUND)
     target_link_libraries(miniset PRIVATE GDAL::GDAL)
     target_compile_definitions(miniset PRIVATE MINISET_HAS_GDAL)
@@ -108,6 +98,13 @@ endif()
 if(MINISET_BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
+endif()
+
+# Applications
+if(CSMAPI_FOUND)
+    add_executable(campt apps/campt.cpp)
+    target_link_libraries(campt PRIVATE miniset)
+    install(TARGETS campt RUNTIME DESTINATION bin)
 endif()
 
 # Examples
