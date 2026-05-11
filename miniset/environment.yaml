@@ -1,0 +1,43 @@
+name: miniset
+channels:
+  - conda-forge
+  - usgs-astrogeology
+dependencies:
+  # Build tools
+  - cmake>=3.15
+  - make
+  - cxx-compiler
+  - clang_osx-arm64  # macOS ARM compiler
+  - clangxx_osx-arm64
+
+  # CSM libraries (for Phase 3+)
+  - csmapi>=1.0
+  - usgscsm>=2.0
+
+  # Geospatial libraries
+  - gdal>=3.0
+  - proj>=6.0
+
+  # Bundle adjustment
+  - ceres-solver>=2.0
+
+  # Linear algebra (Ceres dependency)
+  - eigen>=3.3
+  - suitesparse
+
+  # Testing
+  - gtest>=1.10
+  - gmock>=1.10
+
+  # Parallelization
+  - llvm-openmp  # OpenMP for Clang on macOS
+
+  # Utilities
+  - pkg-config
+  - ninja  # Fast build system (optional, can use make)
+
+  # Documentation (optional)
+  - doxygen
+
+  # NOTE: If you encounter SSL certificate errors, use: export CONDA_SSL_VERIFY=false
+  # See SSL_FIX.md for details
