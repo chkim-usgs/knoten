@@ -2,41 +2,30 @@
 #define MINISET_SURFACE_ELLIPSOID_HPP
 
 #include "core/types.hpp"
+#include <vector>
 
-namespace surface {
+namespace ellipsoid {
 
-// Ellipsoid surface model (biaxial or triaxial)
-class Ellipsoid {
-public:
-    // Constructors
-    Ellipsoid(double semi_major, double semi_minor);
-    Ellipsoid(double semi_major, double semi_median, double semi_minor);
-
-    // Factory method from CSM sensor
+// Factory function from CSM sensor
 #ifdef MINISET_HAS_CSMAPI
-    static Ellipsoid fromCsmSensor(const void* sensor);
+Ellipsoid3 fromCsmSensor(const void* sensor);
 #endif
 
-    // Get radii
-    double getSemiMajorA() const { return a_; }
-    double getSemiMedianB() const { return b_; }
-    double getSemiMinorC() const { return c_; }
+// Get surface normal at a point
+Vec3 getSurfaceNormal(const Ellipsoid3& e, const Vec3& ground_pt);
 
-    // Get surface normal at a point
-    Vec3 getSurfaceNormal(const Vec3& ground_pt) const;
+// Ray-ellipsoid intersection
+Vec3 intersectSurface(const Ellipsoid3& e, const Vec3& sensor_pos, const Vec3& look_vec);
 
-    // Ray-ellipsoid intersection
-    Vec3 intersectSurface(const Vec3& sensor_pos, const Vec3& look_vec) const;
+// Get radius at geodetic point
+double getRadiusAt(const Ellipsoid3& e, double lat_rad, double lon_rad);
 
-    // Get radius at geodetic point
-    double getRadiusAt(double lat_rad, double lon_rad) const;
+// Batch operations
+std::vector<Vec3> getSurfaceNormalBatch(const Ellipsoid3& e, const std::vector<Vec3>& points);
+std::vector<Vec3> intersectSurfaceBatch(const Ellipsoid3& e,
+                                         const std::vector<Vec3>& sensor_positions,
+                                         const std::vector<Vec3>& look_vectors);
 
-private:
-    double a_;  // Semi-major axis (equatorial, x-axis)
-    double b_;  // Semi-median axis (equatorial, y-axis)
-    double c_;  // Semi-minor axis (polar, z-axis)
-};
-
-} // namespace surface
+} // namespace ellipsoid
 
 #endif // MINISET_SURFACE_ELLIPSOID_HPP

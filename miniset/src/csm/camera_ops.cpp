@@ -16,33 +16,31 @@ void groundToImage(const ::csm::RasterGM* sensor, const Vec3& ground_pt, double&
     sample = img.samp;
 }
 
-ImageCoordsBatch generateBoundary(int width, int height, int npoints) {
-    ImageCoordsBatch boundary;
-    boundary.count = npoints * 4;
-    boundary.line.reserve(boundary.count);
-    boundary.sample.reserve(boundary.count);
-    
+std::vector<ImageCoord> generateBoundary(int width, int height, int npoints) {
+    std::vector<ImageCoord> boundary;
+    boundary.reserve(npoints * 4);
+
+    // Top edge
     for (int i = 0; i < npoints; ++i) {
         double frac = static_cast<double>(i) / (npoints - 1);
-        boundary.line.push_back(0.0);
-        boundary.sample.push_back(frac * width);
+        boundary.push_back(ImageCoord(0.0, frac * width));
     }
+    // Right edge
     for (int i = 0; i < npoints; ++i) {
         double frac = static_cast<double>(i) / (npoints - 1);
-        boundary.line.push_back(frac * height);
-        boundary.sample.push_back(width);
+        boundary.push_back(ImageCoord(frac * height, width));
     }
+    // Bottom edge
     for (int i = 0; i < npoints; ++i) {
         double frac = static_cast<double>(i) / (npoints - 1);
-        boundary.line.push_back(height);
-        boundary.sample.push_back(width - frac * width);
+        boundary.push_back(ImageCoord(height, width - frac * width));
     }
+    // Left edge
     for (int i = 0; i < npoints; ++i) {
         double frac = static_cast<double>(i) / (npoints - 1);
-        boundary.line.push_back(height - frac * height);
-        boundary.sample.push_back(0.0);
+        boundary.push_back(ImageCoord(height - frac * height, 0.0));
     }
-    
+
     return boundary;
 }
 #endif

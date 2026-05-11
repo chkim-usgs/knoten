@@ -2,14 +2,15 @@
 #define MINISET_CORE_TRANSFORMS_HPP
 
 #include "core/types.hpp"
+#include <vector>
 
 namespace transforms {
 
 // Batch image to ground transformations
-GroundPointsBatch imageToGroundBatch(const ImageCoordsBatch& coords, double height);
+std::vector<Vec3> imageToGroundBatch(const std::vector<ImageCoord>& coords, double height);
 
-// Batch ground to image transformations  
-ImageCoordsBatch groundToImageBatch(const GroundPointsBatch& points);
+// Batch ground to image transformations
+std::vector<ImageCoord> groundToImageBatch(const std::vector<Vec3>& points);
 
 } // namespace transforms
 

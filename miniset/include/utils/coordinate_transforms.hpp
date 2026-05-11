@@ -3,12 +3,13 @@
 
 #include "core/types.hpp"
 #include <string>
+#include <vector>
 
 namespace utils {
 
 #ifdef MINISET_HAS_PROJ
 // Transform coordinates using PROJ
-GroundPointsBatch transformCoordinates(const GroundPointsBatch& input,
+std::vector<Vec3> transformCoordinates(const std::vector<Vec3>& input,
                                        const std::string& source_proj,
                                        const std::string& dest_proj);
 #endif
@@ -21,7 +22,7 @@ Vec3 latLonToEcef(double lat_rad, double lon_rad, double height,
                   double semi_major, double semi_minor);
 
 // Batch conversions
-std::vector<LatLon> batchEcefToLatLon(const GroundPointsBatch& batch,
+std::vector<LatLon> batchEcefToLatLon(const std::vector<Vec3>& points,
                                       double semi_major, double semi_minor);
 
 } // namespace utils
